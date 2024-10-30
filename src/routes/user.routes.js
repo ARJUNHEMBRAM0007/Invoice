@@ -1,14 +1,11 @@
-import { Router } from "express";
-import { loginUser, logoutUser, registerUser } from "../controllers/user.controller.js";
-import { verifyJwt } from "../middlewares/auth.middleware.js";
+// routes/authRoutes.js
+import express from 'express';
+import { register, login, logout } from '../controllers/user.controller.js';
 
-const router = Router()
+const router = express.Router();
 
-router.route("/register").post(registerUser)
+router.post('/register', register); // Route for user registration
+router.post('/login', login);       // Route for user login
+router.post('/logout', logout);     // Route for user logout
 
-router.route("/login").post(loginUser)
-
-//secures routes
-router.route("/logout").post(verifyJwt, logoutUser)
-
-export default router
+export default router;

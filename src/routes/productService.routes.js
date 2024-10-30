@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { verifyJwt } from '../middlewares/auth.middleware.js';
+import { protect } from '../middlewares/auth.middleware.js';
 import {
     createProductService,
     getProductServices,
@@ -10,7 +10,7 @@ import {
 
 const router = Router();
 
-router.route('/').post(verifyJwt, createProductService).get(verifyJwt, getProductServices);
-router.route('/:id').get(verifyJwt, getProductServiceById).put(verifyJwt, updateProductService).delete(verifyJwt, deleteProductService);
+router.route('/').post(protect, createProductService).get(protect, getProductServices);
+router.route('/:id').get(protect, getProductServiceById).put(protect, updateProductService).delete(protect, deleteProductService);
 
 export default router;

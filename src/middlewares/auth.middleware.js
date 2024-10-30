@@ -1,30 +1,25 @@
-import { ApiError } from "../utils/ApiError.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
-import jwt from "jsonwebtoken"
-import { User } from "../models/user.model.js";
+// middlewares/authMiddleware.js
+import { verifyToken } from '../utils/jwtHelper.js';
+import { User } from '../models/user.model.js';
 
+export const protect = async (req, res, next) => {
+  let token;
 
-export const verifyJwt =  asyncHandler(async (req, res, next) => {
-    try {
-        const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "")
-    
-        if(!token)
-        {
-            throw new ApiError("Unauthorized", 401)
-        }
-    
-        const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-    
-        const user = await User.findById(decodedToken?._id).select("-password -refreshToken")
-    
-        if(!user){
-            throw new ApiError("Invalid Access Token", 401)
-        }
-    
-        req.user = user;
-        next()
-    } catch (error) {
-        throw new ApiError(401, error?.message || "Invalid access token")
-    }
-    
-})
+  // Check for token in Authorization header
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) {
+    return res.status(401).json({ message: 'Not authorized, token missing' });
+  }
+
+  try {
+    // Decode and verify token, retrieve user information
+    const decoded = verifyToken(token);
+    req.user = await User.findById(decoded.id).select('-password'); // Exclude password
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: 'Not authorized, token invalid' });
+  }
+};
