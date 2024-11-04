@@ -69,3 +69,35 @@ export const login = async (req, res) => {
 export const logout = (req, res) => {
   res.status(200).json({ message: 'Logged out successfully' });
 };
+
+// Get User Profile
+export const getUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password'); // Exclude password
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Error in fetching profile", error: error.message });
+  }
+};
+
+
+// Update User Profile
+export const updateUserProfile = async (req, res) => {
+  try {
+    const { username, email, country } = req.body;
+    const updatedData = { username, email, country };
+    const user = await User.findByIdAndUpdate(req.user.id, updatedData, {
+      new: true,
+      runValidators: true,
+    }).select('-password'); // Exclude password from response
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ message: "Profile updated successfully", user });
+  } catch (error) {
+    res.status(500).json({ message: "Error in updating profile", error: error.message });
+  }
+};
