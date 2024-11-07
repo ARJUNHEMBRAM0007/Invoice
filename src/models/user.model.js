@@ -9,13 +9,6 @@ const userSchema = new Schema(
             required: true,
             default: "India" 
         },
-        username: {
-            type: String,
-            required: true,
-            unique: true,
-            trim: true,
-            index: true
-        },
         email: {
             type: String,
             required: true,

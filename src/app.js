@@ -5,13 +5,22 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 
 const app = express()
-app.use(express.json());
 app.use(helmet());
-
+app.use(express.json());
 app.use(cors({
     origin: process.env.CORS_ORIGIN,
     credentials: true
 }))
+
+
+
+
+// OR, Enable CORS for a specific origin (your frontend origin)
+app.use(cors({
+    origin: 'http://localhost:3000', // Allow requests from React app
+    credentials: true,
+  }));
+  app.options('*', cors());  // Handle OPTIONS requests
 
 
 app.use(morgan('combined'));

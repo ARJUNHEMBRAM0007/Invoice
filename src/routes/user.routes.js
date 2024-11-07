@@ -6,7 +6,10 @@ import { register, login, logout, getUserProfile,
 
 const router = express.Router();
 
-router.post('/register', register); // Route for user registration
+router.post('/register', (req, res, next) => {
+    console.log('Register endpoint hit');  // Add this to see if the route is being triggered
+    next();
+  }, register);// Route for user registration
 router.post('/login', login);       // Route for user login
 router.post('/logout', protect, logout);     // Route for user logout
 router.get('/profile', protect, getUserProfile);
